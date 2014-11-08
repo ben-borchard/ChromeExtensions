@@ -1,0 +1,26 @@
+{
+	"manifest_version": 2,
+
+	"name": "Google Search +",
+	"description": "Provides additional functionalities to google search",
+	"version": "1.0",
+	
+	"background" : {
+		"page" : "background.html",
+		"persistent" : false
+	},
+	
+	"content_scripts": [ 
+		{
+			"matches": ["https://www.google.com/*"],
+			"js": ["jquery-1.10.2.js", "content.js"]
+		}
+	],
+	
+	"permissions": [
+		"https://www.google.com/search*",
+		"https://www.google.com/#q=*",
+		"tabs"
+	]
+
+}
