@@ -64,75 +64,28 @@ var removeChooser = function(tabSelected){
 
 //updates the selected tab by bordering its icon, unbordering the previously selected
 //tab's icon, and changing the title displayed to the selected tabs title
-var updateBorderAndTitle = function(newIndex){
-	
-	/////////////////////////////////////
-	//update the index appropriately
-	///////////////////////////////////
-	
+var updateBorderAndTitle = function(newIndex){	
 	
 	var lastIcon = iconBordered;
-	//if called directly in the code
-	if (typeof newIndex == "number") {
-		iconBordered = newIndex;
-	}
-	//if called as the event handler of an event
-	else{
-		iconBordered = newIndex.data.newIndex;
-	}
-	
-	//make sure that the indices wrap around so that there is no index out of bounds
-	//issue
-	if (iconBordered == orderedTabArray.length){
-		iconBordered = 0;
-	}
-	if (iconBordered == -1){
-		iconBordered = orderedTabArray.length-1;
-	}
-	
-	//////////////////////////////////////
-	// update border and title
-	/////////////////////////////////////
-		
+
+	iconBordered = typeof newIndex == "number" ? newIndex : newIndex.data.newIndex;
+	iconBordered = iconBordered == orderedTabArray.length ? 0 : iconBordered;
+	iconBordered = iconBordered == -1 ? orderedTabArray.length-1 : iconBordered;
+			
 	// use the index to update the title
 	var title = orderedTabArray[iconBordered].title;
-	
-	// update the border of the icon 
-	document.body.children[0]. // div
-		children[0].  // ul
-		children[iconBordered]. //li
-		//children[0].  // img
-		setAttribute("style", 
-	   "height:"+iconHeight+";background-color:rbga(0,0,0,0.75);padding:1% 2%;"+
-	   "border:2px solid #000000;border-radius:25px;");
-	// and unborder the last icon
+
+	$($('.mruext-chooser').children()[iconBordered]).addClass('mruext-image-border');
 	if (lastIcon != -1){
-		document.body.children[0]. // div
-		children[0].  // ul
-		children[iconBordered]. //li
-		//children[0].  // img
-		setAttribute("style", 
-		   "height:"+iconHeight+";background-color:rbga(0,0,0,0);padding:1% 2%;");		       
+		$($('.mruext-chooser').children()[lastIcon]).removeClass('mruext-image-border');
 	}
 	
-	//update the titleDisplay by removing the paragraph previously in it and adding
-	//a new one with the appropriate title
-	if (document.body.children[1].children.length != 0) {
-		document.body.children[1].removeChild(document.body.children[1].firstChild);
-	}
-	var urlParagraph = document.createElement("p");
-	urlParagraph.appendChild(document.createTextNode(title));
-	document.body.children[1].appendChild(urlParagraph);
-	var left = ((window.innerWidth - document.body.children[1].offsetWidth)/2).toString()+"px";
-	document.body.children[1].setAttribute("style",
-	   "position:fixed;top:30%;height:5%;color:#ffffff;text-align:center;"+
-	   "background-color:rgba(0,0,0,.75);border:2px solid #000000;"+
-	   "border-radius:25px;left:"+left+";z-index:100000000;");       
+	$('.mruext-title').html(title);
 }
 
 //listen for messages from the background script (it only sends a message
 //when the user wants to toggle the tab forward or backward)
-port.onMessage.addListener(function(msg){	
+port.onMessage.addListener(function(msg){
 
 	//the the tab isn't in focus, this function should do nothing
 	if (!modDown) {
@@ -157,29 +110,17 @@ port.onMessage.addListener(function(msg){
 		/////////////////////////////////////////////////////////////
 		
 		// create the div to hold the images for the tabs
-		tabChooser = document.createElement("div");
-		tabChooser.setAttribute("style", 
-		   "position:fixed;top:35%;left:"+left+";width:"+width+";height:15%;"+
-		   "background-color:rgba(0,0,0,.5);border:2px solid #000000;"+
-		   "border-radius:25px;z-index:10000000;");
-		// create ordered list to hold the images
-		imgList = document.createElement("ul");
-		imgList.setAttribute("style", "list-style-type:none;");
-		tabChooser.appendChild(imgList);
-		
-		titleDisplay = document.createElement("div");
-		titleDisplay.setAttribute("style", 
-		   "position:fixed;top:30%;height:4%;color:#ffffff;text-align:center;"+
-		   "background-color:rgba(0,0,0,.75);border:2px solid #000000;"+
-		   "border-radius:25px;z-index:100000000;");
-		
+		//tabChooser = document.createElement("div");
+
+		tabChooser = $('<div></div>').addClass("mruext-chooser");
+		titleDisplay = $('<div></div>').addClass("mruext-title");
 		
 		//make a new array of tabs that is in ordered by how recently they
 		//were focused
 		orderedTabArray = new Array();
-		console.log(msg.orderArray);
+		//console.log(msg.orderArray);
 		for(var i=0; i<msg.tabArray.length; i++){
-			console.log(i);
+			//console.log(i);
 			orderedTabArray[msg.orderArray[i].mruValue] = msg.tabArray[i];
 		} 
 		
@@ -187,35 +128,29 @@ port.onMessage.addListener(function(msg){
 		//orderedTabArray, style the image appropriately, and add it to the
 		//tabChooser div
 		for(var i=0; i<orderedTabArray.length; i++){
+
 			var image = document.createElement("img");
-			var listItem = document.createElement("li");
-			listItem.setAttribute("style", "display:inline;")
-			//console.log(orderedTabArray);
-			//console.log(i);
+
 			if (orderedTabArray[i].url.indexOf("chrome://") != 0){
-				image.setAttribute("src", orderedTabArray[i].favIconUrl);
+				$(image).attr("src", orderedTabArray[i].favIconUrl);
 			}
 			//TODO: Figure out why the code below is breaking the extension...
 			//else if (orderedTabArray[i].url.equals("")){
 			//	image.setAttribute("src", chrome.extenstion.getURL("newTab.png"));
 			//}
 			else{
-				image.setAttribute("src", chrome.extension.getURL("chrome.png"));
+				//image.setAttribute("src", chrome.extension.getURL("chrome.png"));
 			}
-			//image.setAttribute("onmouseover", "updateBorderAndTitle("+i+")");
-			//image.setAttribute("onmousdown", "removeChooser(true)");
+
 			$(image).mouseover({newIndex : i}, updateBorderAndTitle);
 			$(image).mousedown({tabSelected : true}, removeChooser);
-			listItem.setAttribute("style", 
-		           "height:"+iconHeight+";background-color:rbga(0,0,0,0);"+
-			   "padding:1% 2%;");
-			listItem.appendChild(image)
-			imgList.appendChild(listItem);
+			$(image).addClass('mruext-image');
+
+			$(tabChooser).append(image);
 		}
-		
-		//insert the two displays into the body of the document
-		document.body.insertBefore(titleDisplay, document.body.firstChild);
-		document.body.insertBefore(tabChooser, document.body.firstChild);
+
+		$(document.body).prepend(titleDisplay);
+		$(document.body).prepend(tabChooser);
 		
 		//set the initial icon to bordered be the first in the list
 		iconBordered = 0;
