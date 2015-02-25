@@ -77,9 +77,13 @@ var updateBorderAndTitle = function(newIndex){
 
 	$($('.mruext-chooser').children()[iconBordered]).addClass('mruext-image-border');
 	if (lastIcon != -1){
+
 		$($('.mruext-chooser').children()[lastIcon]).removeClass('mruext-image-border');
+		
 	}
-	
+
+	var left = ((window.innerWidth - $('.mruext-title').offsetWidth)/2).toString()+"px";
+	$('.mruext-title').attr("style","left:"+left);       
 	$('.mruext-title').html(title);
 }
 
@@ -114,7 +118,8 @@ port.onMessage.addListener(function(msg){
 
 		tabChooserContainer = $('<div></div>').addClass("mruext-container");
 		tabChooser = $('<div></div>').addClass("mruext-chooser");
-		titleDisplay = $('<p></p>').addClass("mruext-title");
+		title = $('<p></p>');
+		titleDisplay = $('<div></div>').addClass("mruext-title").append(title);
 		
 		//make a new array of tabs that is in ordered by how recently they
 		//were focused
@@ -148,10 +153,10 @@ port.onMessage.addListener(function(msg){
 			$(image).addClass('mruext-image');
 
 			$(tabChooser).append(image);
-			$(tabChooserContainer).append(titleDisplay);
 			$(tabChooserContainer).append(tabChooser);
 		}
 
+		$(document.body).prepend(titleDisplay);
 		$(document.body).prepend(tabChooserContainer);
 		
 		

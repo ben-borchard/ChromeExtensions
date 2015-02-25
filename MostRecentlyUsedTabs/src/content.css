@@ -13,6 +13,7 @@
 }
 
 .mruext-title{
+	position:fixed;
 	top:135px;
 	height:4%;
 	color:#ffffff;
