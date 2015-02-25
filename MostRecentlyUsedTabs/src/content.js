@@ -80,7 +80,7 @@ var updateBorderAndTitle = function(newIndex){
 		$($('.mruext-chooser').children()[lastIcon]).removeClass('mruext-image-border');
 	}
 	
-	$('.mruext-title p').html(title);
+	$('.mruext-title').html(title);
 }
 
 //listen for messages from the background script (it only sends a message
@@ -114,8 +114,7 @@ port.onMessage.addListener(function(msg){
 
 		tabChooserContainer = $('<div></div>').addClass("mruext-container");
 		tabChooser = $('<div></div>').addClass("mruext-chooser");
-		title = $('<p></p>');
-		titleDisplay = $('<div></div>').addClass("mruext-title").append(title);
+		titleDisplay = $('<p></p>').addClass("mruext-title");
 		
 		//make a new array of tabs that is in ordered by how recently they
 		//were focused
@@ -149,11 +148,12 @@ port.onMessage.addListener(function(msg){
 			$(image).addClass('mruext-image');
 
 			$(tabChooser).append(image);
+			$(tabChooserContainer).append(titleDisplay);
 			$(tabChooserContainer).append(tabChooser);
 		}
 
 		$(document.body).prepend(tabChooserContainer);
-		$(document.body).prepend(titleDisplay);
+		
 		
 		//set the initial icon to bordered be the first in the list
 		iconBordered = 0;

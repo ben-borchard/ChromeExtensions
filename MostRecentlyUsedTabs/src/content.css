@@ -13,11 +13,9 @@
 }
 
 .mruext-title{
-	position:fixed;
 	top:135px;
 	height:4%;
 	color:#ffffff;
-	text-align:center;
 	background-color:rgba(0,0,0,.75);
 	border:2px solid #000000;
 	border-radius:25px;
