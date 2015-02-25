@@ -12,8 +12,19 @@
 	height:45px;
 }
 
-
 .mruext-title{
+	position:fixed;
+	top:30%;
+	height:4%;
+	color:#ffffff;
+	text-align:center;
+	background-color:rgba(0,0,0,.75);
+	border:2px solid #000000;
+	border-radius:25px;
+	z-index:100000000;
+}
+
+/*.mruext-title{
 	position: block;
 	margin-top: 135;
 	color:#ffffff;
@@ -22,7 +33,7 @@
 	solid: #000000;
 	border-radius:25px;
 	z-index:100000000;
-}
+}*/
 
 .mruext-chooser{
 	position:block;

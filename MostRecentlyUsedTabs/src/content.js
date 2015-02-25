@@ -148,11 +148,11 @@ port.onMessage.addListener(function(msg){
 			$(image).addClass('mruext-image');
 
 			$(tabChooser).append(image);
-			$(tabChooserContainer).append(titleDisplay);
 			$(tabChooserContainer).append(tabChooser);
 		}
 
 		$(document.body).prepend(tabChooserContainer);
+		$(document.body).prepend(titleDisplay);
 		
 		//set the initial icon to bordered be the first in the list
 		iconBordered = 0;
