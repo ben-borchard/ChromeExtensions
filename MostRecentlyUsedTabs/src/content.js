@@ -112,6 +112,7 @@ port.onMessage.addListener(function(msg){
 		// create the div to hold the images for the tabs
 		//tabChooser = document.createElement("div");
 
+		tabChooserContainer = $('<div></div>').addClass("mruext-container");
 		tabChooser = $('<div></div>').addClass("mruext-chooser");
 		titleDisplay = $('<div></div>').addClass("mruext-title");
 		
@@ -147,10 +148,11 @@ port.onMessage.addListener(function(msg){
 			$(image).addClass('mruext-image');
 
 			$(tabChooser).append(image);
+			$(tabChooserContainer).append(titleDisplay);
+			$(tabChooserContainer).append(tabChooser);
 		}
 
-		$(document.body).prepend(titleDisplay);
-		$(document.body).prepend(tabChooser);
+		$(document.body).prepend(tabChooserContainer);
 		
 		//set the initial icon to bordered be the first in the list
 		iconBordered = 0;
