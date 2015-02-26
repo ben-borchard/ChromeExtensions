@@ -74,6 +74,7 @@ var updateBorderAndTitle = function(newIndex){
 			
 	// use the index to update the title
 	var title = orderedTabArray[iconBordered].title;
+	
 
 	$($('.mruext-chooser').children()[iconBordered]).addClass('mruext-image-border');
 	if (lastIcon != -1){
@@ -83,7 +84,7 @@ var updateBorderAndTitle = function(newIndex){
 	}
 
 	console.log((window.innerWidth).toString()+'  -  '+($('.mruext-title').width()).toString());
-	console.log((document.getElementsByClassName('mruext-title')[0].offsetWidth).toString());
+	console.log(document.body.children[1].offsetWidth);
 	var left = ((window.innerWidth - $('.mruext-title').width())/2).toString()+"px";
 	//var left = ((window.innerWidth - document.getElementsByClassName('.mruext-title')[0].offsetWidth())/2).toString()+"px";
 	//$('.mruext-title').attr("style","left:"+left);       
