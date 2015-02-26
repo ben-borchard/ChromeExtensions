@@ -82,7 +82,7 @@ var updateBorderAndTitle = function(newIndex){
 		
 	}
 
-	var left = ((window.innerWidth - $('.mruext-title').offsetWidth)/2).toString()+"px";
+	var left = ((window.innerWidth - $('.mruext-title').outerWidth())/2).toString()+"px";
 	$('.mruext-title').attr("style","left:"+left);       
 	$('.mruext-title').html(title);
 }
@@ -101,20 +101,6 @@ port.onMessage.addListener(function(msg){
 	
 	//if the tabChooser isn't there, create it and put in in the document body
 	if (tabChooser == null){
-		
-		//determine various aspects of the style based on the number of
-		//tabs in the window and the size of the window
-		var tabNum = msg.tabArray.length;
-		var width = Math.min(70, tabNum*10).toString() + "%";
-		var left = Math.max(15, (100-tabNum*10)/2) + "%";
-		iconHeight = ((100/(Math.ceil(tabNum/7)+1))-10).toString() + "%";
-		
-		/////////////////////////////////////////////////////////////
-		// create the two displays and set their styles appropriately
-		/////////////////////////////////////////////////////////////
-		
-		// create the div to hold the images for the tabs
-		//tabChooser = document.createElement("div");
 
 		tabChooserContainer = $('<div></div>').addClass("mruext-container");
 		tabChooser = $('<div></div>').addClass("mruext-chooser");
@@ -135,7 +121,7 @@ port.onMessage.addListener(function(msg){
 		//tabChooser div
 		for(var i=0; i<orderedTabArray.length; i++){
 
-			var image = document.createElement("img");
+			var image =$('<img></img>');
 
 			if (orderedTabArray[i].url.indexOf("chrome://") != 0){
 				$(image).attr("src", orderedTabArray[i].favIconUrl);
