@@ -50,13 +50,14 @@ port.onDisconnect.addListener(function(message){
 //if tabSelected is false, no message will be sent
 var removeChooser = function(tabSelected){
 	if (tabChooser != null){
-		document.body.removeChild(tabChooser);
-		document.body.removeChild(titleDisplay);
+		$(tabChooserContainer).remove();
+		$(titleDisplay).remove();
 		if (tabSelected) {
 			port.postMessage(orderedTabArray[iconBordered].index);
 		}
 		tabChooser = null;
 		titleDisplay = null;
+		titleChooserContainer = null;
 		imgList = null;
 		iconBordered = -1;
 	}
@@ -83,13 +84,13 @@ var updateBorderAndTitle = function(newIndex){
 		
 	}
 
-	console.log((window.innerWidth).toString()+'  -  '+($('.mruext-title').width()).toString());
-	console.log(document.body.children[1].offsetWidth);
-	var left = ((window.innerWidth - $('.mruext-title').width())/2).toString()+"px";
+	$('.mruext-title p').html(title);
+
 	//var left = ((window.innerWidth - document.getElementsByClassName('.mruext-title')[0].offsetWidth())/2).toString()+"px";
 	//$('.mruext-title').attr("style","left:"+left);       
+	var left = ((window.innerWidth - $('.mruext-title').outerWidth())/2).toString()+"px";
 	$('.mruext-title').css("left", left);
-	$('.mruext-title p').html(title);
+	
 }
 
 //listen for messages from the background script (it only sends a message
@@ -115,9 +116,7 @@ port.onMessage.addListener(function(msg){
 		//make a new array of tabs that is in ordered by how recently they
 		//were focused
 		orderedTabArray = new Array();
-		//console.log(msg.orderArray);
 		for(var i=0; i<msg.tabArray.length; i++){
-			//console.log(i);
 			orderedTabArray[msg.orderArray[i].mruValue] = msg.tabArray[i];
 		} 
 		
@@ -179,6 +178,7 @@ $(document).keyup(function (event){
 	}
 	if (key.indexOf(event.which) != -1){
 		//remove the chooser when the appropriate modifier comes up
+		console.log('mod up');
 		modDown = false;
 		removeChooser(true);
 	}
