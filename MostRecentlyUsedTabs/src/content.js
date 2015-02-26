@@ -82,12 +82,13 @@ var updateBorderAndTitle = function(newIndex){
 		
 	}
 
-	console.log((window.innerWidth).toString()+'  -  '+($('.mruext-title').outerWidth()).toString())
-	console.log((document.getElementsByClassName('.mruext-title')[0].offsetWidth.toString())
-	var left = ((window.innerWidth - $('.mruext-title').outerWidth())/2).toString()+"px";
+	console.log((window.innerWidth).toString()+'  -  '+($('.mruext-title').width()).toString());
+	console.log((document.getElementsByClassName('mruext-title')[0].offsetWidth).toString());
+	var left = ((window.innerWidth - $('.mruext-title').width())/2).toString()+"px";
 	//var left = ((window.innerWidth - document.getElementsByClassName('.mruext-title')[0].offsetWidth())/2).toString()+"px";
-	$('.mruext-title').attr("style","left:"+left);       
-	$('.mruext-title').html(title);
+	//$('.mruext-title').attr("style","left:"+left);       
+	$('.mruext-title').css("left", left);
+	$('.mruext-title p').html(title);
 }
 
 //listen for messages from the background script (it only sends a message
