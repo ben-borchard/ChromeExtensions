@@ -15,10 +15,6 @@ var imgList = null;
 //the index of the icon that is currently selected
 var iconBordered = -1;
 
-//the height of the icon which is determined based on the number of tabs
-//open in the current window
-var iconHeight = -1;
-
 //an array of tab objects that is ordered according to how recently each tab was used
 var orderedTabArray = new Array();
 
@@ -86,16 +82,62 @@ var updateBorderAndTitle = function(newIndex){
 
 	$('.mruext-title p').html(title);
 
-	//var left = ((window.innerWidth - document.getElementsByClassName('.mruext-title')[0].offsetWidth())/2).toString()+"px";
-	//$('.mruext-title').attr("style","left:"+left);       
 	var left = ((window.innerWidth - $('.mruext-title').outerWidth())/2).toString()+"px";
 	$('.mruext-title').css("left", left);
 	
 }
+function createChooser(msg){
 
-//listen for messages from the background script (it only sends a message
-//when the user wants to toggle the tab forward or backward)
-port.onMessage.addListener(function(msg){
+	tabChooserContainer = $('<div></div>').addClass("mruext-container");
+	tabChooser = $('<div></div>').addClass("mruext-chooser");
+	title = $('<p></p>');
+	titleDisplay = $('<div></div>').addClass("mruext-title").append(title);
+	
+	//make a new array of tabs that is in ordered by how recently they
+	//were focused
+	orderedTabArray = new Array();
+	for(var i=0; i<msg.tabArray.length; i++){
+		orderedTabArray[msg.orderArray[i].mruValue] = msg.tabArray[i];
+	} 
+	
+	//create the image using the favIconUrl property of the tabs in the
+	//orderedTabArray, style the image appropriately, and add it to the
+	//tabChooser div
+	for(var i=0; i<orderedTabArray.length; i++){
+
+		var image =$('<img></img>');
+
+		if (orderedTabArray[i].url.indexOf("chrome://") != 0){
+			$(image).attr("src", orderedTabArray[i].favIconUrl);
+		}
+		//TODO: Figure out why the code below is breaking the extension...
+		//else if (orderedTabArray[i].url.equals("")){
+		//	image.setAttribute("src", chrome.extenstion.getURL("newTab.png"));
+		//}
+		else{
+			//image.setAttribute("src", chrome.extension.getURL("chrome.png"));
+		}
+
+		$(image).mouseover({newIndex : i}, updateBorderAndTitle);
+		$(image).mousedown({tabSelected : true}, removeChooser);
+		$(image).addClass('mruext-image');
+
+		$(tabChooser).append(image);
+		$(tabChooserContainer).append(titleDisplay);
+		$(tabChooserContainer).append(tabChooser);
+	}
+
+	$(document.body).prepend(tabChooserContainer);
+	
+	
+	//set the initial icon to bordered be the first in the list
+	iconBordered = 0;
+	
+	//update the selected tab appropriately
+	updateBorderAndTitle(msg.indexOffset+iconBordered);
+}
+
+var tabtoggle = function(msg){
 
 	//the the tab isn't in focus, this function should do nothing
 	if (!modDown) {
@@ -107,54 +149,7 @@ port.onMessage.addListener(function(msg){
 	
 	//if the tabChooser isn't there, create it and put in in the document body
 	if (tabChooser == null){
-
-		tabChooserContainer = $('<div></div>').addClass("mruext-container");
-		tabChooser = $('<div></div>').addClass("mruext-chooser");
-		title = $('<p></p>');
-		titleDisplay = $('<div></div>').addClass("mruext-title").append(title);
-		
-		//make a new array of tabs that is in ordered by how recently they
-		//were focused
-		orderedTabArray = new Array();
-		for(var i=0; i<msg.tabArray.length; i++){
-			orderedTabArray[msg.orderArray[i].mruValue] = msg.tabArray[i];
-		} 
-		
-		//create the image using the favIconUrl property of the tabs in the
-		//orderedTabArray, style the image appropriately, and add it to the
-		//tabChooser div
-		for(var i=0; i<orderedTabArray.length; i++){
-
-			var image =$('<img></img>');
-
-			if (orderedTabArray[i].url.indexOf("chrome://") != 0){
-				$(image).attr("src", orderedTabArray[i].favIconUrl);
-			}
-			//TODO: Figure out why the code below is breaking the extension...
-			//else if (orderedTabArray[i].url.equals("")){
-			//	image.setAttribute("src", chrome.extenstion.getURL("newTab.png"));
-			//}
-			else{
-				//image.setAttribute("src", chrome.extension.getURL("chrome.png"));
-			}
-
-			$(image).mouseover({newIndex : i}, updateBorderAndTitle);
-			$(image).mousedown({tabSelected : true}, removeChooser);
-			$(image).addClass('mruext-image');
-
-			$(tabChooser).append(image);
-			$(tabChooserContainer).append(tabChooser);
-		}
-
-		$(document.body).prepend(titleDisplay);
-		$(document.body).prepend(tabChooserContainer);
-		
-		
-		//set the initial icon to bordered be the first in the list
-		iconBordered = 0;
-		
-		//update the selected tab appropriately
-		updateBorderAndTitle(msg.indexOffset+iconBordered);
+		createChooser(msg)
 	}
 	//if the tabChooser is already on screen, the user is just trying to navigate
 	//to the proper tab
@@ -162,7 +157,12 @@ port.onMessage.addListener(function(msg){
 		//update the selected tab appropriately
 		updateBorderAndTitle(msg.indexOffset+iconBordered);
 	}
-});
+}
+
+//listen for messages from the background script (it only sends a message
+//when the user wants to toggle the tab forward or backward)
+port.onMessage.addListener(tabtoggle);
+
 
 //listen for keyup events
 $(document).keyup(function (event){
@@ -208,13 +208,13 @@ $(document).keydown(function (event){
 	//right arrow
 	if (event.which == 39) {
 		if (tabChooser != null) {
-			updateBorderAndTitle("Toggle-Tab-Forward");
+			updateBorderAndTitle(iconBordered+1);
 		}
 	}
 	//left arrow
 	if (event.which == 37) {
 		if (tabChooser != null) {
-			updateBorderAndTitle("Toggle-Tab-Backward");
+			updateBorderAndTitle(iconBordered-1);
 		}
 	}
 	//enter
