@@ -82,7 +82,10 @@ var updateBorderAndTitle = function(newIndex){
 		
 	}
 
+	console.log((window.innerWidth).toString()+'  -  '+($('.mruext-title').outerWidth()).toString())
+	console.log((document.getElementsByClassName('.mruext-title')[0].offsetWidth.toString())
 	var left = ((window.innerWidth - $('.mruext-title').outerWidth())/2).toString()+"px";
+	//var left = ((window.innerWidth - document.getElementsByClassName('.mruext-title')[0].offsetWidth())/2).toString()+"px";
 	$('.mruext-title').attr("style","left:"+left);       
 	$('.mruext-title').html(title);
 }
