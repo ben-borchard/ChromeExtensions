@@ -26,20 +26,10 @@
 	z-index:100000000;
 }
 
-/*"position:fixed;top:30%;height:5%;color:#ffffff;"+
-	   "background-color:rgba(0,0,0,.75);border:2px solid #000000;"+
-	   "border-radius:25px;left:"+left+";z-index:100000000;"
-
-.mruext-title{
-	position: block;
-	margin-top: 135;
-	color:#ffffff;
-	background-color:rgba(0,0,0,.75);
-	border:2px
-	solid: #000000;
-	border-radius:25px;
-	z-index:100000000;
-}*/
+.mruext-title p{
+	padding: 0px 0px 0px 0px;
+	margin: 0px 0px 0px 0px;
+}
 
 .mruext-chooser{
 	position:block;

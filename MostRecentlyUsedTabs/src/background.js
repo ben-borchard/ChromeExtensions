@@ -86,27 +86,27 @@ chrome.tabs.onCreated.addListener(function(tab){
 });
 
 chrome.tabs.onRemoved.addListener(function(tabId, removeInfo){
-	//console.log("tab removed");
+	// console.log("tab removed");
 	orderAttrLists.getByWinId(removeInfo.windowId).remove(tabId);
 });
 
 chrome.tabs.onAttached.addListener(function(tabId, attachInfo){
-	//console.log("tab attached");
+	// console.log("tab attached");
 	orderAttrLists.getByWinId(attachInfo.newWindowId).add(attachInfo.newPosition, tabId);
 });
 
 chrome.tabs.onDetached.addListener(function(tabId, detachInfo){
-	//console.log("tab detached");
+	// console.log("tab detached");
 	orderAttrLists.getByWinId(detachInfo.oldWindowId).remove(tabId);
 });
 
 chrome.tabs.onMoved.addListener(function(tabId, moveInfo){
-	//console.log("tab moved");
+	// console.log("tab moved");
 	orderAttrLists.getByWinId(moveInfo.windowId).swap(moveInfo.fromIndex, moveInfo.toIndex);
 });
 
 chrome.tabs.onActivated.addListener(function(activeInfo) {
-	//console.log("tab activated");
+	 // console.log("tab activated");
 	orderAttrLists.getByWinId(activeInfo.windowId).toFront(activeInfo.tabId);	
 });
 
@@ -129,18 +129,20 @@ chrome.runtime.onConnect.addListener(function(port){
 			indexOffset = -1;
 		}
 		chrome.windows.get(chrome.windows.WINDOW_ID_CURRENT, getInfo, function(window) {
+			console.log(window.id);
 			port.postMessage({orderArray: orderAttrLists.getByWinId(window.id).getArray(),
 			   tabArray: window.tabs, indexOffset: indexOffset});
+
 		});
 	});
 	
 	port.onMessage.addListener(function(msg){
 		tabIndexArray = new Array();
-		console.log(msg);
+		//console.log(msg);
 		tabIndexArray[0] = msg;
 		highlightInfo = {windowId: chrome.windows.WINDOW_ID_CURRENT, tabs: tabIndexArray};
 		chrome.tabs.highlight(highlightInfo, function(window){
-			console.log("not sure what to do here");
+			//console.log("not sure what to do here");
 		});
 	});
 });

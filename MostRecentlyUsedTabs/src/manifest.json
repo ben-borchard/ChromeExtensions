@@ -30,7 +30,7 @@
 	},
 	
 	"web_accessible_resources": [
-		"chrome.png",
+		".../resrc/images/chrome.png",
 		"newTab.png"
   	],
 

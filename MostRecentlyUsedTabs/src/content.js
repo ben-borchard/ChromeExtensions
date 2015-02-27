@@ -115,7 +115,7 @@ function createChooser(msg){
 		//	image.setAttribute("src", chrome.extenstion.getURL("newTab.png"));
 		//}
 		else{
-			//image.setAttribute("src", chrome.extension.getURL("chrome.png"));
+			$(image).attr("src", chrome.extension.getURL("resrc/chrome.png"));
 		}
 
 		$(image).mouseover({newIndex : i}, updateBorderAndTitle);
