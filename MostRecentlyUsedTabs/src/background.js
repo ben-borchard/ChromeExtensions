@@ -118,14 +118,29 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
 *///////////////////////////////////////////////////////////////////
 
 
+// tab switch engaged
+chrome.commands.onCommand.addListener(function(command){
+	
+	var indexOffset = 0;
+	if (command == "Toggle-Tab-Forward") {
+		indexOffset = 1;
+	}
+	else{
+		indexOffset = -1;
+	}
 
-chrome.windows.get(chrome.windows.WINDOW_ID_CURRENT, getInfo, function(window) {
-	// send to the active tab
-	chrome.tabs.query({active: true, current_window: true}, function(tabs){
-		chrome.tabs.sendMessage(tabs[0].id, {
-			orderArray: orderAttrLists.getByWinId(window.id).getArray(),
-			tabArray: window.tabs, 
-			indexOffset: indexOffset
+	console.log("command: "+command);
+
+	// current window
+	chrome.windows.get(-2, getInfo, function(window) {
+		
+		// active tab
+		chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+			chrome.tabs.sendMessage(tabs[0].id, {
+				orderArray: orderAttrLists.getByWinId(window.id).getArray(),
+				tabArray: window.tabs, 
+				indexOffset: indexOffset
+			});
 		});
 	});
 });
