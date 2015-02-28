@@ -4,9 +4,6 @@
  * date: January 22, 2014
  */
 
-//connection that allows communation with the background script
-var port = chrome.runtime.connect();
-
 //the two displays that appear when the user is trying to switch a tab
 var tabChooser = null;
 var titleDisplay = null;
@@ -35,11 +32,6 @@ window.onblur = function() {
 	hasFocus = false;
 };
 
-//included for testing purposes
-port.onDisconnect.addListener(function(message){
-	console.log("disconnected");
-});
-
 //removes the chooser if it is there and resets all the global variables
 //if tabSelected is true, then a message will be sent to the background script
 //telling it to activate the selected tab
@@ -49,7 +41,7 @@ var removeChooser = function(tabSelected){
 		$(tabChooserContainer).remove();
 		$(titleDisplay).remove();
 		if (tabSelected) {
-			port.postMessage(orderedTabArray[iconBordered].index);
+			chrome.runtime.sendMessage(orderedTabArray[iconBordered].index);
 		}
 		tabChooser = null;
 		titleDisplay = null;
@@ -137,7 +129,7 @@ function createChooser(msg){
 	updateBorderAndTitle(msg.indexOffset+iconBordered);
 }
 
-var tabtoggle = function(msg){
+var tabtoggle = function(msg, sender, sendRespose){
 
 	//the the tab isn't in focus, this function should do nothing
 	if (!modDown) {
@@ -161,7 +153,7 @@ var tabtoggle = function(msg){
 
 //listen for messages from the background script (it only sends a message
 //when the user wants to toggle the tab forward or backward)
-port.onMessage.addListener(tabtoggle);
+chrome.runtime.onMessage.addListener(tabtoggle);
 
 
 //listen for keyup events

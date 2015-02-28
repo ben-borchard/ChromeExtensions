@@ -117,32 +117,28 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
 *
 *///////////////////////////////////////////////////////////////////
 
-chrome.runtime.onConnect.addListener(function(port){
-	console.log("connected");
-	
-	chrome.commands.onCommand.addListener(function(command){
-		var indexOffset = 0;
-		if (command == "Toggle-Tab-Forward") {
-			indexOffset = 1;
-		}
-		else{
-			indexOffset = -1;
-		}
-		chrome.windows.get(chrome.windows.WINDOW_ID_CURRENT, getInfo, function(window) {
-			console.log(window.id);
-			port.postMessage({orderArray: orderAttrLists.getByWinId(window.id).getArray(),
-			   tabArray: window.tabs, indexOffset: indexOffset});
 
+
+chrome.windows.get(chrome.windows.WINDOW_ID_CURRENT, getInfo, function(window) {
+	// send to the active tab
+	chrome.tabs.query({active: true, current_window: true}, function(tabs){
+		chrome.tabs.sendMessage(tabs[0].id, {
+			orderArray: orderAttrLists.getByWinId(window.id).getArray(),
+			tabArray: window.tabs, 
+			indexOffset: indexOffset
 		});
 	});
+});
 	
-	port.onMessage.addListener(function(msg){
+// Listen for messages from tabs
+chrome.runtime.onMessage.addListener(
+	function(msg, sender, sendResponse){
 		tabIndexArray = new Array();
-		//console.log(msg);
 		tabIndexArray[0] = msg;
 		highlightInfo = {windowId: chrome.windows.WINDOW_ID_CURRENT, tabs: tabIndexArray};
 		chrome.tabs.highlight(highlightInfo, function(window){
 			//console.log("not sure what to do here");
 		});
-	});
-});
+	}
+
+);
