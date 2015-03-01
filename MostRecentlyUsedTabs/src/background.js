@@ -71,43 +71,62 @@ chrome.windows.getAll(getInfo, function(windows){
 *///////////////////////////////////////////////////////////////////
 
 chrome.windows.onCreated.addListener(function(window){
-	//console.log("window created");
+	console.log("window created");
 	orderAttrLists[orderAttrLists.length] = {windowId: window.id, orderAttrList: new OrderAttrList()};
 });
 
 chrome.windows.onRemoved.addListener(function(windowId){
-	//console.log("window removed");
+	console.log("window removed");
  	orderAttrLists.removeByWinId(windowId);
 });
 
 chrome.tabs.onCreated.addListener(function(tab){
-	//console.log("tab created");
+	console.log("tab created: "+tab.id);
 	orderAttrLists.getByWinId(tab.windowId).add(tab.index, tab.id);
 });
 
 chrome.tabs.onRemoved.addListener(function(tabId, removeInfo){
-	// console.log("tab removed");
+	console.log("tab removed: "+tabId);
 	orderAttrLists.getByWinId(removeInfo.windowId).remove(tabId);
 });
 
 chrome.tabs.onAttached.addListener(function(tabId, attachInfo){
-	// console.log("tab attached");
+	console.log("tab attached: "+tabId);
 	orderAttrLists.getByWinId(attachInfo.newWindowId).add(attachInfo.newPosition, tabId);
 });
 
 chrome.tabs.onDetached.addListener(function(tabId, detachInfo){
-	// console.log("tab detached");
+	console.log("tab detached: "+tabId);
 	orderAttrLists.getByWinId(detachInfo.oldWindowId).remove(tabId);
 });
 
 chrome.tabs.onMoved.addListener(function(tabId, moveInfo){
-	// console.log("tab moved");
+	console.log("tab moved: "+tabId);
 	orderAttrLists.getByWinId(moveInfo.windowId).swap(moveInfo.fromIndex, moveInfo.toIndex);
 });
 
 chrome.tabs.onActivated.addListener(function(activeInfo) {
-	 // console.log("tab activated");
-	orderAttrLists.getByWinId(activeInfo.windowId).toFront(activeInfo.tabId);	
+	
+
+	chrome.tabs.get(activeInfo.tabId, function(tab){
+		orderAttrLists.getByWinId(tab.windowId).toFront(tab.id);
+		console.log("tab activated: "+activeInfo.tabId);
+	});
+	
+});
+
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+	 // console.log("tab updated id: "+tabId+", tab updated tab: "+tab.id);
+});
+
+chrome.tabs.onReplaced.addListener(function(newTabId, oldTabId) {
+	console.log("tab replaced");
+
+	chrome.tabs.get(newTabId, function(tab){
+		orderAttrLists.getByWinId(tab.windowId).remove(oldTabId);
+		orderAttrLists.getByWinId(tab.windowId).add(tab.index, tab.id);
+		console.log("new: "+newTabId+", "+tab.id);
+	});
 });
 
 /*//////////////////////////////////////////////////////////////////

@@ -86,7 +86,7 @@ function OrderAttrList(tabs){
         
 	// brings a certain object based on the tabId to the front of the mruValue
 	// spectrum (makes the mruValue of the object 0 and adjusts the other mruValues
-	// appropriately
+	// appropriately)
 	this.toFront = function(tabId){
 		var index = getIndexWithTabId(tabId);
 		var value = array[index].mruValue;

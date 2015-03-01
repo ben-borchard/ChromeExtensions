@@ -32,10 +32,10 @@ window.onblur = function() {
 	hasFocus = false;
 };
 
-//removes the chooser if it is there and resets all the global variables
-//if tabSelected is true, then a message will be sent to the background script
-//telling it to activate the selected tab
-//if tabSelected is false, no message will be sent
+// removes the chooser if it is there and resets all the global variables
+// if tabSelected is true, then a message will be sent to the background script
+// telling it to activate the selected tab
+// if tabSelected is false, no message will be sent
 var removeChooser = function(tabSelected){
 	if (tabChooser != null){
 		$(tabChooserContainer).remove();
@@ -72,7 +72,7 @@ var updateBorderAndTitle = function(newIndex){
 		
 	}
 
-	$('.mruext-title p').html(title);
+	$('.mruext-title span').html(title);
 
 	var left = ((window.innerWidth - $('.mruext-title').outerWidth())/2).toString()+"px";
 	$('.mruext-title').css("left", left);
@@ -82,19 +82,19 @@ function createChooser(msg){
 
 	tabChooserContainer = $('<div></div>').addClass("mruext-container");
 	tabChooser = $('<div></div>').addClass("mruext-chooser");
-	title = $('<p></p>');
+	title = $('<span></span>');
 	titleDisplay = $('<div></div>').addClass("mruext-title").append(title);
 	
-	//make a new array of tabs that is in ordered by how recently they
-	//were focused
+	// make a new array of tabs ordered by how recently they
+	// were focused
 	orderedTabArray = new Array();
 	for(var i=0; i<msg.tabArray.length; i++){
 		orderedTabArray[msg.orderArray[i].mruValue] = msg.tabArray[i];
 	} 
 	
-	//create the image using the favIconUrl property of the tabs in the
-	//orderedTabArray, style the image appropriately, and add it to the
-	//tabChooser div
+	// create the image using the favIconUrl property of the tabs in the
+	// orderedTabArray, style the image appropriately, and add it to the
+	// tabChooser div
 	for(var i=0; i<orderedTabArray.length; i++){
 
 		var image =$('<img></img>');
@@ -102,7 +102,7 @@ function createChooser(msg){
 		if (orderedTabArray[i].url.indexOf("chrome://") != 0){
 			$(image).attr("src", orderedTabArray[i].favIconUrl);
 		}
-		//TODO: Figure out why the code below is breaking the extension...
+		// TODO: Figure out why the code below is breaking the extension...
 		//else if (orderedTabArray[i].url.equals("")){
 		//	image.setAttribute("src", chrome.extenstion.getURL("newTab.png"));
 		//}
