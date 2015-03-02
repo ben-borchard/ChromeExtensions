@@ -23,6 +23,7 @@ function OrderAttrList(tabs){
 	// parameter
 	function incrementAllBelow(number){
 		for (var i=0; i<array.length; i++){
+			// console.log(i+" : "+array[i]);
 			if (array[i].mruValue < number){
 				array[i].mruValue = array[i].mruValue+1;
 			}
@@ -58,8 +59,8 @@ function OrderAttrList(tabs){
 	// adds an object to the array and adjusts the mru values appropriately
 	// (gives the added object an mruValue of 0)
 	this.add = function(index, tabId){
-		for(var i=array.length-1; i>index; i--){
-			array[i] = array[i+1]
+		for(var i=array.length-1; i>index-1; i--){
+			array[i+1] = array[i]
 		}
 		array[index] = new Object();
 		array[index].mruValue = -1;
@@ -98,10 +99,17 @@ function OrderAttrList(tabs){
 	this.toString = function(){
 		var logString = "[";
 		for(var i=0; i<array.length-1; i++){
-			logString = logString + array[i] + ", ";
+			logString = logString + array[i].tabId + ", ";
 		}
-		logString = array[array.length-1] + "]";
-		console.log(logString);
+
+		if (typeof(array[array.length-1]) === 'undefined'){
+			console.log("Array Empty")
+		}
+		else {
+			logString += array[array.length-1].tabId + "]";
+			console.log(logString);		
+		}
+		
 		return logString;
 	}
 }

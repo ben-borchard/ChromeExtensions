@@ -1,3 +1,25 @@
+
+
+/* Reset css so display is constant across all pages */
+.mruext-title{
+	background: #FFF;
+	border: none;
+	color: #000;
+	display: block;
+	font: normal;
+	height: auto;
+	letter-spacing: normal;
+	line-height: normal;
+	margin: 0;
+	padding: 0;
+	text-transform: normal;
+	visibility: visible;
+	width: auto;
+	word-spacing: normal;
+	z-index: auto;
+}
+
+/* Extension specific classes */
 .mruext-image-border{
 	background-color:rbga(0,0,0,0.75);
 	border:2px solid #000000;

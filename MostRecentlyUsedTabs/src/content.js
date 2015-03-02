@@ -21,17 +21,6 @@ var hasFocus = true;
 //a boolean that keeps track of whether the modifier key has been pressed
 var modDown = false;
 
-//set listeners so the focus of the tab can be updated
-window.onfocus = function() {
-	//console.log('focus');
-	hasFocus = true;
-};
-
-window.onblur = function() {
-	//console.log('blur');
-	hasFocus = false;
-};
-
 // removes the chooser if it is there and resets all the global variables
 // if tabSelected is true, then a message will be sent to the background script
 // telling it to activate the selected tab
@@ -88,6 +77,8 @@ function createChooser(msg){
 	// make a new array of tabs ordered by how recently they
 	// were focused
 	orderedTabArray = new Array();
+	console.log(msg.tabArray.length);
+	console.log(msg.orderArray.length);
 	for(var i=0; i<msg.tabArray.length; i++){
 		orderedTabArray[msg.orderArray[i].mruValue] = msg.tabArray[i];
 	} 
@@ -99,16 +90,20 @@ function createChooser(msg){
 
 		var image =$('<img></img>');
 
-		if (orderedTabArray[i].url.indexOf("chrome://") != 0){
+		// Set image
+
+		// New Tab
+		if (orderedTabArray[i].url.indexOf("chrome://newtab/") == 0)
+			$(image).attr("src", chrome.extension.getURL("images/newTab.PNG"));
+		// Chrome configuration tab
+		else if (orderedTabArray[i].url.indexOf("chrome://") == 0)
+			$(image).attr("src", chrome.extension.getURL("images/chrome.png"));
+		// Default for sites with no favicon
+		else if (typeof(orderedTabArray[i].favIconUrl) === 'undefined')
+			$(image).attr("src", chrome.extension.getURL("images/defaultIcon.png"));
+		// Favicon of site
+		else 
 			$(image).attr("src", orderedTabArray[i].favIconUrl);
-		}
-		// TODO: Figure out why the code below is breaking the extension...
-		//else if (orderedTabArray[i].url.equals("")){
-		//	image.setAttribute("src", chrome.extenstion.getURL("newTab.png"));
-		//}
-		else{
-			$(image).attr("src", chrome.extension.getURL("resrc/chrome.png"));
-		}
 
 		$(image).mouseover({newIndex : i}, updateBorderAndTitle);
 		$(image).mousedown({tabSelected : true}, removeChooser);
@@ -133,9 +128,6 @@ var tabtoggle = function(msg, sender, sendRespose){
 
 	//the the tab isn't in focus, this function should do nothing
 	if (!modDown) {
-		return;
-	}
-	if (!hasFocus) {
 		return;
 	}
 	
@@ -194,24 +186,32 @@ $(document).keydown(function (event){
 	//escape key
 	if (event.which == 27) {
 		if (tabChooser != null) {
+			event.preventDefault();
+			event.stopPropagation();
 			removeChooser(false);
 		}
 	}
 	//right arrow
 	if (event.which == 39) {
 		if (tabChooser != null) {
+			event.preventDefault();
+			event.stopPropagation();
 			updateBorderAndTitle(iconBordered+1);
 		}
 	}
 	//left arrow
 	if (event.which == 37) {
 		if (tabChooser != null) {
+			event.preventDefault();
+			event.stopPropagation();
 			updateBorderAndTitle(iconBordered-1);
 		}
 	}
 	//enter
 	if (event.which == 13) {
 		if (tabChooser != null) {
+			event.preventDefault();
+			event.stopPropagation();
 			removeChooser(true);
 		}
 	}

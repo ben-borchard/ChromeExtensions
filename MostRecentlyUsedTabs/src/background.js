@@ -21,8 +21,8 @@ orderAttrLists.getByWinId = function(windowId){
 	}
 }
 
-//specify a function in our array so that we can remove an orderAttrList by
-//providing the windowId
+// specify a function in our array so that we can remove an orderAttrList by
+// providing the windowId
 orderAttrLists.removeByWinId = function(windowId){
 	var index = -1;
 	for(var i=0; i<orderAttrLists.length; i++){
@@ -92,7 +92,9 @@ chrome.tabs.onRemoved.addListener(function(tabId, removeInfo){
 
 chrome.tabs.onAttached.addListener(function(tabId, attachInfo){
 	console.log("tab attached: "+tabId);
+	orderAttrLists.getByWinId(attachInfo.newWindowId).toString();
 	orderAttrLists.getByWinId(attachInfo.newWindowId).add(attachInfo.newPosition, tabId);
+	orderAttrLists.getByWinId(attachInfo.newWindowId).toString();
 });
 
 chrome.tabs.onDetached.addListener(function(tabId, detachInfo){
@@ -109,8 +111,8 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
 	
 
 	chrome.tabs.get(activeInfo.tabId, function(tab){
-		orderAttrLists.getByWinId(tab.windowId).toFront(tab.id);
 		console.log("tab activated: "+activeInfo.tabId);
+		orderAttrLists.getByWinId(tab.windowId).toFront(tab.id);
 	});
 	
 });

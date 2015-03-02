@@ -30,8 +30,9 @@
 	},
 	
 	"web_accessible_resources": [
-		".../resrc/images/chrome.png",
-		"newTab.png"
+		"images/chrome.png",
+		"images/newTab.PNG",
+		"images/defaultIcon.png"
   	],
 
 	"permissions": [
