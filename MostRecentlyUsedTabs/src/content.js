@@ -21,6 +21,18 @@ var hasFocus = true;
 //a boolean that keeps track of whether the modifier key has been pressed
 var modDown = false;
 
+
+//set listeners so the focus of the tab can be updated
+window.onfocus = function() {
+	//console.log('focus');
+	hasFocus = true;
+};
+
+window.onblur = function() {
+	//console.log('blur');
+	hasFocus = false;
+};
+
 var port = chrome.runtime.connect();
 
 //included for testing purposes
