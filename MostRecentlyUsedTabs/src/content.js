@@ -21,6 +21,14 @@ var hasFocus = true;
 //a boolean that keeps track of whether the modifier key has been pressed
 var modDown = false;
 
+var port = chrome.runtime.connect();
+
+//included for testing purposes
+port.onDisconnect.addListener(function(message){
+       console.log("disconnected");
+});
+
+
 // removes the chooser if it is there and resets all the global variables
 // if tabSelected is true, then a message will be sent to the background script
 // telling it to activate the selected tab
@@ -30,7 +38,8 @@ var removeChooser = function(tabSelected){
 		$(tabChooserContainer).remove();
 		$(titleDisplay).remove();
 		if (tabSelected) {
-			chrome.runtime.sendMessage(orderedTabArray[iconBordered].index);
+			//chrome.runtime.sendMessage(orderedTabArray[iconBordered].index);
+			port.postMessage(orderedTabArray[iconBordered].index);
 		}
 		tabChooser = null;
 		titleDisplay = null;
@@ -145,7 +154,9 @@ var tabtoggle = function(msg, sender, sendRespose){
 
 //listen for messages from the background script (it only sends a message
 //when the user wants to toggle the tab forward or backward)
-chrome.runtime.onMessage.addListener(tabtoggle);
+//chrome.runtime.onMessage.addListener(tabtoggle);
+port.onMessage.addListener(tabtoggle);
+
 
 
 //listen for keyup events
