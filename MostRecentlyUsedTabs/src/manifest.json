@@ -30,10 +30,8 @@
 	},
 
 	"icons": {
-	
 		"48" : "images.icon48.jpg",
 		"128" : "images.icon48.jpg",
-
 	},
 	
 	"web_accessible_resources": [
