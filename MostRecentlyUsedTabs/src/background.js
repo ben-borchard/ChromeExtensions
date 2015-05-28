@@ -2,17 +2,17 @@
 /*
  * author: Ben Borchard
  * file: background.js
- * date: January 22, 2014
+ * date: May 28, 2015
  */
 
-//constant object needed as arguments for specific chrome methods
+// constant object needed as arguments for specific chrome methods
 var getInfo = {populate:true};
 var queryInfo = {active:true};
 
 var orderAttrLists = new Array();
 
-//specify a function in our array so that we can access the orderAttrList by
-//providing the windowId
+// specify a function in our array so that we can access the orderAttrList by
+// providing the windowId
 orderAttrLists.getByWinId = function(windowId){
 	for(var i=0; i<orderAttrLists.length; i++){
 		if (windowId == orderAttrLists[i].windowId){
@@ -35,17 +35,17 @@ orderAttrLists.removeByWinId = function(windowId){
 	}
 }
 
-//initialize the orderAttrLists array by looking at all windows and tabs within
+// initialize the orderAttrLists array by looking at all windows and tabs within
 chrome.windows.getAll(getInfo, function(windows){
 	for(var i=0; i<windows.length; i++){
 		orderAttrLists[i] = new Object();
 		orderAttrLists[i].windowId = windows[i].id;
 		orderAttrLists[i].orderAttrList = new OrderAttrList(windows[i].tabs);
-		//reload all tabs so that the connection can be established in each one
+		// reload all tabs so that the connection can be established in each one
 		for (var j=0; j<windows[i].tabs.length; j++){
-			//do not reload the extensions tab because it will reload the extension
-			//and will cause an infinite loop of reloading
-			//TODO: see if this is necessary after the extension is packed
+			// do not reload the extensions tab because it will reload the extension
+			// and will cause an infinite loop of reloading
+			// TODO: see if this is necessary after the extension is packed
 			if (windows[i].tabs[j].url.indexOf("chrome://extensions") != 0) {
 				chrome.tabs.reload(windows[i].tabs[j].id);
 			}
@@ -71,39 +71,32 @@ chrome.windows.getAll(getInfo, function(windows){
 *///////////////////////////////////////////////////////////////////
 
 chrome.windows.onCreated.addListener(function(window){
-	console.log("window created");
 	orderAttrLists[orderAttrLists.length] = {windowId: window.id, orderAttrList: new OrderAttrList()};
 });
 
 chrome.windows.onRemoved.addListener(function(windowId){
-	console.log("window removed");
  	orderAttrLists.removeByWinId(windowId);
 });
 
 chrome.tabs.onCreated.addListener(function(tab){
-	console.log("tab created: "+tab.id);
 	orderAttrLists.getByWinId(tab.windowId).add(tab.index, tab.id);
 });
 
 chrome.tabs.onRemoved.addListener(function(tabId, removeInfo){
-	console.log("tab removed: "+tabId);
 	orderAttrLists.getByWinId(removeInfo.windowId).remove(tabId);
 });
 
 chrome.tabs.onAttached.addListener(function(tabId, attachInfo){
-	console.log("tab attached: "+tabId);
 	orderAttrLists.getByWinId(attachInfo.newWindowId).toString();
 	orderAttrLists.getByWinId(attachInfo.newWindowId).add(attachInfo.newPosition, tabId);
 	orderAttrLists.getByWinId(attachInfo.newWindowId).toString();
 });
 
 chrome.tabs.onDetached.addListener(function(tabId, detachInfo){
-	console.log("tab detached: "+tabId);
 	orderAttrLists.getByWinId(detachInfo.oldWindowId).remove(tabId);
 });
 
 chrome.tabs.onMoved.addListener(function(tabId, moveInfo){
-	console.log("tab moved: "+tabId);
 	orderAttrLists.getByWinId(moveInfo.windowId).swap(moveInfo.fromIndex, moveInfo.toIndex);
 });
 
@@ -111,18 +104,12 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
 	
 
 	chrome.tabs.get(activeInfo.tabId, function(tab){
-		console.log("tab activated: "+activeInfo.tabId);
 		orderAttrLists.getByWinId(tab.windowId).toFront(tab.id);
 	});
 	
 });
 
-chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-	 // console.log("tab updated id: "+tabId+", tab updated tab: "+tab.id);
-});
-
 chrome.tabs.onReplaced.addListener(function(newTabId, oldTabId) {
-	console.log("tab replaced");
 
 	chrome.tabs.get(newTabId, function(tab){
 		orderAttrLists.getByWinId(tab.windowId).remove(oldTabId);
@@ -140,7 +127,6 @@ chrome.tabs.onReplaced.addListener(function(newTabId, oldTabId) {
 
 
 chrome.runtime.onConnect.addListener(function(port){
-	console.log("connected");
 	
 	chrome.commands.onCommand.addListener(function(command){
 		var indexOffset = 0;
@@ -160,11 +146,10 @@ chrome.runtime.onConnect.addListener(function(port){
 	
 	port.onMessage.addListener(function(msg){
 		tabIndexArray = new Array();
-		//console.log(msg);
 		tabIndexArray[0] = msg;
 		highlightInfo = {windowId: chrome.windows.WINDOW_ID_CURRENT, tabs: tabIndexArray};
 		chrome.tabs.highlight(highlightInfo, function(window){
-			//console.log("not sure what to do here");
+			// No follow-up action required
 		});
 	});
 });

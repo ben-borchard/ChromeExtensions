@@ -1,45 +1,37 @@
 /*
  * author: Ben Borchard
  * file: content.js
- * date: January 22, 2014
+ * date: May 28, 2015
  */
 
-//the two displays that appear when the user is trying to switch a tab
+// the two displays that appear when the user is trying to switch a tab
 var tabChooser = null;
 var titleDisplay = null;
 var imgList = null;
 
-//the index of the icon that is currently selected
+// the index of the icon that is currently selected
 var iconBordered = -1;
 
-//an array of tab objects that is ordered according to how recently each tab was used
+// an array of tab objects that is ordered according to how recently each tab was used
 var orderedTabArray = new Array();
 
-//boolean that determines whether the tab has focus in the window
+// boolean that determines whether the tab has focus in the window
 var hasFocus = true;
 
-//a boolean that keeps track of whether the modifier key has been pressed
+// a boolean that keeps track of whether the modifier key has been pressed
 var modDown = false;
 
 
-//set listeners so the focus of the tab can be updated
+// set listeners so the focus of the tab can be updated
 window.onfocus = function() {
-	//console.log('focus');
 	hasFocus = true;
 };
 
 window.onblur = function() {
-	//console.log('blur');
 	hasFocus = false;
 };
 
 var port = chrome.runtime.connect();
-
-//included for testing purposes
-port.onDisconnect.addListener(function(message){
-       console.log("disconnected");
-});
-
 
 // removes the chooser if it is there and resets all the global variables
 // if tabSelected is true, then a message will be sent to the background script
@@ -61,8 +53,8 @@ var removeChooser = function(tabSelected){
 	}
 }
 
-//updates the selected tab by bordering its icon, unbordering the previously selected
-//tab's icon, and changing the title displayed to the selected tabs title
+// updates the selected tab by bordering its icon, unbordering the previously selected
+// tab's icon, and changing the title displayed to the selected tabs title
 var updateBorderAndTitle = function(newIndex){	
 	
 	var lastIcon = iconBordered;
@@ -98,8 +90,6 @@ function createChooser(msg){
 	// make a new array of tabs ordered by how recently they
 	// were focused
 	orderedTabArray = new Array();
-	console.log(msg.tabArray.length);
-	console.log(msg.orderArray.length);
 	for(var i=0; i<msg.tabArray.length; i++){
 		orderedTabArray[msg.orderArray[i].mruValue] = msg.tabArray[i];
 	} 
@@ -138,16 +128,16 @@ function createChooser(msg){
 	$(document.body).prepend(tabChooserContainer);
 	
 	
-	//set the initial icon to bordered be the first in the list
+	// set the initial icon to bordered be the first in the list
 	iconBordered = 0;
 	
-	//update the selected tab appropriately
+	// update the selected tab appropriately
 	updateBorderAndTitle(msg.indexOffset+iconBordered);
 }
 
 var tabtoggle = function(msg, sender, sendRespose){
 
-	//the the tab isn't in focus, this function should do nothing
+	// the the tab isn't in focus, this function should do nothing
 	if (!modDown) {
 		return;
 	}
@@ -157,29 +147,29 @@ var tabtoggle = function(msg, sender, sendRespose){
 	}
 	
 	
-	//if the tabChooser isn't there, create it and put in in the document body
+	// if the tabChooser isn't there, create it and put in in the document body
 	if (tabChooser == null){
 		createChooser(msg)
 	}
-	//if the tabChooser is already on screen, the user is just trying to navigate
-	//to the proper tab
+	// if the tabChooser is already on screen, the user is just trying to navigate
+	// to the proper tab
 	else{
 		//update the selected tab appropriately
 		updateBorderAndTitle(msg.indexOffset+iconBordered);
 	}
 }
 
-//listen for messages from the background script (it only sends a message
-//when the user wants to toggle the tab forward or backward)
-//chrome.runtime.onMessage.addListener(tabtoggle);
+// listen for messages from the background script (it only sends a message
+// when the user wants to toggle the tab forward or backward)
+// chrome.runtime.onMessage.addListener(tabtoggle);
 port.onMessage.addListener(tabtoggle);
 
 
 
-//listen for keyup events
+// listen for keyup events
 $(document).keyup(function (event){
-	//determine if one of the appropriate modifier keys is causing the event
-	//(ctrl for pc and linux and command for mac)
+	// determine if one of the appropriate modifier keys is causing the event
+	// (ctrl for pc and linux and command for mac)
 	var key = new Array();
 	if (navigator.appVersion.indexOf("Mac") != -1){
 		key[0] = 91;
@@ -190,15 +180,14 @@ $(document).keyup(function (event){
 	}
 	if (key.indexOf(event.which) != -1){
 		//remove the chooser when the appropriate modifier comes up
-		console.log('mod up');
 		modDown = false;
 		removeChooser(true);
 	}
 });
 
-//listen for keydown events
+// listen for keydown events
 $(document).keydown(function (event){
-	//modifier key
+	// modifier key
 	var key = new Array();
 	if (navigator.appVersion.indexOf("Mac") != -1){
 		key[0] = 91;
@@ -211,7 +200,7 @@ $(document).keydown(function (event){
 		modDown = true;
 	}
 	
-	//escape key
+	// escape key
 	if (event.which == 27) {
 		if (tabChooser != null) {
 			event.preventDefault();
@@ -219,7 +208,7 @@ $(document).keydown(function (event){
 			removeChooser(false);
 		}
 	}
-	//right arrow
+	// right arrow
 	if (event.which == 39) {
 		if (tabChooser != null) {
 			event.preventDefault();
@@ -227,7 +216,7 @@ $(document).keydown(function (event){
 			updateBorderAndTitle(iconBordered+1);
 		}
 	}
-	//left arrow
+	// left arrow
 	if (event.which == 37) {
 		if (tabChooser != null) {
 			event.preventDefault();
@@ -235,7 +224,7 @@ $(document).keydown(function (event){
 			updateBorderAndTitle(iconBordered-1);
 		}
 	}
-	//enter
+	// enter
 	if (event.which == 13) {
 		if (tabChooser != null) {
 			event.preventDefault();
