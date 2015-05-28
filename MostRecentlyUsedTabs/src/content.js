@@ -151,6 +151,11 @@ var tabtoggle = function(msg, sender, sendRespose){
 	if (!modDown) {
 		return;
 	}
+
+	if (!hasFocus) {
+		return;
+	}
+	
 	
 	//if the tabChooser isn't there, create it and put in in the document body
 	if (tabChooser == null){
