@@ -1,7 +1,7 @@
 /*
  * author: Ben Borchard
  * file: orderAttrList.js
- * date: January 22, 2014
+ * date: May 28, 2015
  */
  
 
@@ -23,7 +23,6 @@ function OrderAttrList(tabs){
 	// parameter
 	function incrementAllBelow(number){
 		for (var i=0; i<array.length; i++){
-			// console.log(i+" : "+array[i]);
 			if (array[i].mruValue < number){
 				array[i].mruValue = array[i].mruValue+1;
 			}
