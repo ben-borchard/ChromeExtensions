@@ -28,6 +28,13 @@
 			"description": "Toggle Tab Backward"
 		}
 	},
+
+	"icons": {
+	
+		"48" : "images.icon48.jpg",
+		"128" : "images.icon48.jpg",
+
+	},
 	
 	"web_accessible_resources": [
 		"images/chrome.png",
@@ -38,5 +45,7 @@
 	"permissions": [
 		"tabs"
 	]
+
+
 
 }
